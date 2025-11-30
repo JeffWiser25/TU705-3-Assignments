@@ -1,0 +1,65 @@
+//traffic_lights
+//C++ file
+//By Daryl Sweeney
+//D2 : Red
+//A5 : Button
+//
+#define Red 6
+#define Green 5
+#define Yellow 3
+#define Button 4
+
+void setup()
+{
+  pinMode(Red, OUTPUT);;
+  pinMode(Green, OUTPUT);
+  pinMode(Yellow, OUTPUT);
+
+  pinMode(Button, INPUT_PULLUP);
+}
+int State = 0;
+
+void loop(){
+int Input;
+Input = digitalRead(Button);
+  if (Input == 0)
+  {//button is pressed
+    State = State +1;
+    if (State > 1)
+      State = 0;
+    while(digitalRead(Button)==0);
+  }
+  if (State ==0)
+  {
+    stoplight();
+  }
+  if(State == 1){
+    Greenlight();
+    delay(5000);
+    Yellowlight();
+    delay(2000);
+    Redlight();
+    delay(5000);
+  }
+}
+
+  void Redlight(){
+    digitalWrite(Red,HIGH);
+    digitalWrite(Yellow,LOW);
+    digitalWrite(Green,LOW);
+  }
+  void Yellowlight(){
+    digitalWrite(Yellow,HIGH);
+    digitalWrite(Red,LOW);
+    digitalWrite(Green,LOW);
+  }
+  void Greenlight(){
+    digitalWrite(Green,HIGH);
+    digitalWrite(Yellow,LOW);
+    digitalWrite(Red,LOW);
+  }
+  void stoplight(){
+    digitalWrite(Red,LOW);
+    digitalWrite(Yellow,LOW);
+    digitalWrite(Green,LOW);
+  }
