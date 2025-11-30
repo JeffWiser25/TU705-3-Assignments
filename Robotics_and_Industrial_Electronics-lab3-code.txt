@@ -1,0 +1,21 @@
+
+#include <SPI.h>
+#define CS_PIN 2
+void setup() {
+// put your setup code here, to run once:
+pinMode(CS_PIN, OUTPUT);
+digitalWrite(CS_PIN,HIGH);
+SPI.begin();
+}
+void write_DAC(int value)
+{
+digitalWrite(CS_PIN,LOW);
+value = value | 0x7000;
+SPI.transfer(value >> 8);
+SPI.transfer(value & 0xff);
+digitalWrite(CS_PIN,HIGH);
+}
+void loop() {
+// put your main code here, to run repeatedly:
+write_DAC(analogRead(0)<<2);
+}
