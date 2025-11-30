@@ -1,0 +1,90 @@
+//Alt_Traffic_Lights_1_1
+//
+//C++ file
+//By Daryl Sweeney & Sam Mulvey
+//D2 : Red
+//A5 : Button
+//
+
+//Relabels the bits on the arduino to logical names. All the following are digital bits 
+#define Red 4
+#define Green 5
+#define Yellow 3
+#define Button 6
+#define Noise 7
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(Red, OUTPUT);//the following lines label the red through yellow bits as outputs
+  pinMode(Green, OUTPUT);
+  pinMode(Yellow, OUTPUT);
+  pinMode(Button, INPUT_PULLUP);//labels the button bit as a pullup input.
+  set_state(0);//thge program will always start in state 0.
+}
+
+int State;//declaring the variable, State. Needed for further code to function.
+
+void loop(){
+  if(button_pressed())//if the subroutine button_pressed returns a 1, the following code gets executed.
+  {//button is pressed
+    set_state(1);//transfers to subroutine set_stat, setting state value to 1
+    wait(2);//transfers to the subroutine wait, with the integer showing a duration of 2 seconds
+    set_state(2);//transfers to subroutine set_stat, setting state value to 2
+    wait(5);//transfers to the subroutine wait, with the integer showing a duration of 5 seconds
+    set_state(0);//transfers to subroutine set_stat, setting state value to 0
+  }
+
+}
+
+int button_pressed(){//this is the subroutine button_pressed mentioned prior
+  if(digitalRead(Button)==0)//as the button bit is labelled as a pullup, it will function like a normally closed input. Press the button to return a 1 to main loop
+  {
+    return 1;
+  }
+  else//if the button is not pressed when this subroutine is called, it will return a 0 to the main loop
+  {
+    return 0;
+  }
+}
+
+void set_state(int new_state){//this is the subroutine set_state mentioned prior, with the declared int being labelled as new_state
+  Serial.print("Leaving ");//this section of code will print the state that the code is both leaving and entering in the serial monitor.
+  Serial.print(State );
+  Serial.print(", entering ");
+  Serial.println(new_state);
+  State = new_state;//Sets the interger State to being equal to the integer new_state
+  switch(State){//this will run through each possible variable for state and execute the coresponding section of code.
+    case 0: {
+      noTone(Noise);//will result in the noise bit being turned off, stopping any sound that might be playing from it
+      digitalWrite(Green,HIGH);//this section of code turns the green light on and the other lights off
+      digitalWrite(Yellow,LOW);
+      digitalWrite(Red,LOW);
+      break;
+    }
+    case 1: {
+      digitalWrite(Yellow,HIGH);//this section of code turns the yellow light on and the other lights off
+      digitalWrite(Red,LOW);
+      digitalWrite(Green,LOW);
+      break;
+    }
+    case 2: {
+      digitalWrite(Red,HIGH);//this section of code turns the red light on and the other lights off
+      digitalWrite(Yellow,LOW);
+      digitalWrite(Green,LOW);
+      tone(Noise, 250);//will result in the noise bit producing a sound at the declared frequency until it is turned off.    
+      break;
+    }
+  }
+}
+
+void wait(int seconds)//the wait subroutine which was mentioned prior, with the declared integer of seconds
+{
+  while(seconds != 0)//as long as the duration stated by the integer seconds remains greater than 0, hte following code will be executed
+  {
+    Serial.println(seconds);//prints the current value for seconds into the serial monitor
+    delay(1000);//a 1 second delay that keeps the wait subroutine timing accurately
+    seconds=seconds-1;//reduces the value of the integer seconds
+  }
+}
+
