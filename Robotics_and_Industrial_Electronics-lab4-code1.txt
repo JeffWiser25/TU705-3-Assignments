@@ -1,0 +1,220 @@
+void setup() {
+  // Stepper state outputs
+  pinMode(0, INPUT);
+  pinMode(2,OUTPUT);
+  pinMode(3,OUTPUT);
+  pinMode(4,OUTPUT);
+  pinMode(5,OUTPUT);
+  digitalWrite(2,LOW);
+  digitalWrite(3,LOW);
+  digitalWrite(4,LOW);
+  digitalWrite(5,LOW);
+
+  Serial.begin(9600);
+
+  // PWM Outputs
+  pinMode(10,OUTPUT);
+  pinMode(9,OUTPUT);
+  analogWrite(6,200); // set to max for testing
+  analogWrite(10,200); 
+  Serial.begin(9600);
+  TCCR1B=1; // uncomment this line for faster PWM
+}
+void rampPinUp0(int PinNumber)
+{
+  analogWrite(PinNumber,0);
+  delay(1);
+  analogWrite(PinNumber,64);
+  delay(1);
+  analogWrite(PinNumber,128);
+  delay(1);
+  analogWrite(PinNumber,192);
+  delay(1);
+  analogWrite(PinNumber,255);
+  delay(1);
+}
+void rampPinDown0(int PinNumber)
+{
+  analogWrite(PinNumber,255);
+  delay(1);
+  analogWrite(PinNumber,192);
+  delay(1);
+  analogWrite(PinNumber,128);
+  delay(1);
+  analogWrite(PinNumber,64);
+  delay(1);
+  analogWrite(PinNumber,0);
+  delay(1);
+}
+
+void rampPinUp(int PinNumber)
+{
+  analogWrite(PinNumber,0);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,64);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,128);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,192);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,255);
+  delayMicroseconds(200);
+}
+void rampPinDown(int PinNumber)
+{
+  analogWrite(PinNumber,255);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,192);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,128);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,64);
+  delayMicroseconds(200);
+  analogWrite(PinNumber,0);
+  delayMicroseconds(200);
+}
+
+int count;
+int rotate_acw(int mag_steps){
+  while(mag_steps != 0){
+    mag_steps= mag_steps-1;
+
+    digitalWrite(3,HIGH); // 0 degrees
+    digitalWrite(2,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,LOW);  
+                                                                                                                                                                                                                                                                                                                  
+
+    digitalWrite(3,HIGH); // 45 degrees
+    digitalWrite(2,LOW);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+    rampPinUp(9);   
+
+  
+    rampPinDown(10);
+    digitalWrite(3,LOW); // 90 degrees
+    digitalWrite(2,LOW);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+  
+    digitalWrite(3,LOW); // 135 degrees
+    digitalWrite(2,HIGH);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+    rampPinUp(10);
+    rampPinDown(9);
+  
+  
+    digitalWrite(3,LOW); // 180 degrees
+    digitalWrite(2,HIGH);
+    digitalWrite(4,LOW);
+    digitalWrite(5,LOW);
+
+  
+    digitalWrite(3,LOW); // 215 degrees
+    digitalWrite(2,HIGH);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    rampPinUp(9);
+    rampPinDown(10);
+
+
+    
+    digitalWrite(3,LOW); // 270 degrees
+    digitalWrite(2,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    
+    
+    digitalWrite(3,HIGH); // 315 degrees
+    digitalWrite(2,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    rampPinUp(10);
+    rampPinDown(9);
+  }
+}
+     
+int rotate_cw(int mag_steps){
+  while(mag_steps != 0){
+    mag_steps= mag_steps-1;
+
+    digitalWrite(2,HIGH); // 0 degrees
+    digitalWrite(3,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,LOW);  
+                                                                                                                                                                                                                                                                                                                  
+
+    digitalWrite(2,HIGH); // 45 degrees
+    digitalWrite(3,LOW);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+    rampPinUp(9);   
+
+  
+    rampPinDown(10);
+    digitalWrite(2,LOW); // 90 degrees
+    digitalWrite(3,LOW);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+  
+    digitalWrite(2,LOW); // 135 degrees
+    digitalWrite(3,HIGH);
+    digitalWrite(4,HIGH);
+    digitalWrite(5,LOW);
+    rampPinUp(10);
+    rampPinDown(9);
+  
+  
+    digitalWrite(2,LOW); // 180 degrees
+    digitalWrite(3,HIGH);
+    digitalWrite(4,LOW);
+    digitalWrite(5,LOW);
+
+  
+    digitalWrite(2,LOW); // 215 degrees
+    digitalWrite(3,HIGH);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    rampPinUp(9);
+    rampPinDown(10);
+
+
+    
+    digitalWrite(2,LOW); // 270 degrees
+    digitalWrite(3,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    
+    
+    digitalWrite(2,HIGH); // 315 degrees
+    digitalWrite(3,LOW);
+    digitalWrite(4,LOW);
+    digitalWrite(5,HIGH);
+    rampPinUp(10);
+    rampPinDown(9);
+  }
+}
+
+int magnetic_angle=0;
+
+void loop() {
+  
+  int desired_angle= analogRead(0);
+  desired_angle= desired_angle/4;//scale ADC values to magnetic steps per rev
+  if(desired_angle>magnetic_angle){
+    rotate_cw(1);
+    magnetic_angle=magnetic_angle+1;
+  }
+  if(desired_angle<magnetic_angle){
+    rotate_acw(1);
+    magnetic_angle=magnetic_angle-1;
+  }
+
+  //rotate_cw(256);
+  //delay(5000);
+  //rotate_acw(256);
+  //delay(5000);
+
+}
